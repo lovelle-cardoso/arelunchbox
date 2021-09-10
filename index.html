@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ARE Lunchbox Architecture Documentation Requirements</title>
   <link rel="stylesheet" href="https://stackedit.io/style.css" />
+  <style>
+  </style>
 </head>
 
 <body class="stackedit">
@@ -23,7 +25,7 @@
 <p>Schema syntax recommendations:</p>
 <ol>
 <li>Alias any special strings or numbers that only allow specific values.</li>
-<li>Mark any properties that the user is not allowed to change as readonly.</li>
+<li>Mark any properties that the user is not allowed to change as <span class="token keyword">readonly</span>.</li>
 <li>Use snake_case for database collection names, camelCase for document property names, and kebab-case for document ids.</li>
 </ol>
 <p>Basic example included below:</p>
@@ -55,35 +57,35 @@
   username<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
   avatar<span class="token punctuation">:</span> FileUrl<span class="token punctuation">;</span>
   courseProgress<span class="token punctuation">:</span> <span class="token punctuation">{</span> <span class="token punctuation">[</span>course<span class="token punctuation">:</span> CourseId<span class="token punctuation">]</span><span class="token punctuation">:</span> CourseProgressObject <span class="token punctuation">}</span><span class="token punctuation">;</span>
-  readonly  purchasedPublications<span class="token punctuation">:</span> PublicationId<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  purchasedPublications<span class="token punctuation">:</span> PublicationId<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 
 <span class="token keyword">interface</span>  <span class="token class-name">BoxDocument</span> <span class="token punctuation">{</span>
-  readonly  name<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
-  readonly  summary<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
-  readonly  icon<span class="token punctuation">:</span> FileUrl<span class="token punctuation">;</span>
-  readonly  price<span class="token punctuation">:</span> <span class="token keyword">number</span><span class="token punctuation">;</span>
-  readonly  courses<span class="token punctuation">:</span> CourseId<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  name<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  summary<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  icon<span class="token punctuation">:</span> FileUrl<span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  price<span class="token punctuation">:</span> <span class="token keyword">number</span><span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  courses<span class="token punctuation">:</span> CourseId<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 
 <span class="token keyword">interface</span>  <span class="token class-name">CourseDocument</span> <span class="token punctuation">{</span>
-  readonly  box<span class="token punctuation">:</span> BoxId<span class="token punctuation">;</span>
-  readonly  name<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
-  readonly  summary<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
-  readonly  icon<span class="token punctuation">:</span> FileUrl<span class="token punctuation">;</span>
-  readonly  price<span class="token punctuation">:</span> <span class="token keyword">number</span><span class="token punctuation">;</span>
-  readonly  sections<span class="token punctuation">:</span> <span class="token punctuation">{</span> <span class="token punctuation">[</span>section<span class="token punctuation">:</span> <span class="token keyword">number</span><span class="token punctuation">]</span><span class="token punctuation">:</span> ModuleId<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  box<span class="token punctuation">:</span> BoxId<span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  name<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  summary<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  icon<span class="token punctuation">:</span> FileUrl<span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  price<span class="token punctuation">:</span> <span class="token keyword">number</span><span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  sections<span class="token punctuation">:</span> <span class="token punctuation">{</span> <span class="token punctuation">[</span>section<span class="token punctuation">:</span> <span class="token keyword">number</span><span class="token punctuation">]</span><span class="token punctuation">:</span> ModuleId<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 
 <span class="token keyword">interface</span>  <span class="token class-name">ModuleDocument</span> <span class="token punctuation">{</span>
-  readonly  course<span class="token punctuation">:</span> CourseId<span class="token punctuation">;</span>
-  readonly  name<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
-  readonly  summary<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
-  readonly  publication<span class="token punctuation">:</span> PublicationId<span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  course<span class="token punctuation">:</span> CourseId<span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  name<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  summary<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  publication<span class="token punctuation">:</span> PublicationId<span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 
 <span class="token keyword">interface</span>  <span class="token class-name">PublicationDocument</span> <span class="token punctuation">{</span>
-  readonly  content<span class="token punctuation">:</span> Markdown<span class="token punctuation">;</span>
+  <span class="token keyword">readonly</span>  content<span class="token punctuation">:</span> Markdown<span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 
 </code></pre>
