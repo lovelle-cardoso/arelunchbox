@@ -15,7 +15,7 @@
 <p>In order for the app architecture to be properly reviewed, please draft the following documentation:</p>
 <ol>
 <li>Database Structure Schema</li>
-<li>Database Security Schema</li>
+<li>Database Security Rules</li>
 <li>User Flow Diagram</li>
 <li>Page Rendering Plan</li>
 </ol>
@@ -121,9 +121,9 @@
   address<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<h2 id="database-security-schema">Database Security Schema</h2>
+<h2 id="database-security-schema">Database Security Rules</h2>
 <p>A high-level summary of how the database will be secured.</p>
-<p>For ease of future development, the schema should be represented using firestore.rules syntax.</p>
+<p>For ease of future development, the rules should be represented using firestore.rules syntax.</p>
 <p>Basic example included below:</p>
 <pre class=" language-javascript"><code class="prism  language-javascript">rules_version <span class="token operator">=</span> <span class="token string">'2'</span><span class="token punctuation">;</span>
 service  cloud<span class="token punctuation">.</span>firestore <span class="token punctuation">{</span>
