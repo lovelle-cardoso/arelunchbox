@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARE Lunchbox Architecture Documentation Requirements</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="are-lunchbox-architecture-documentation-requirements">ARE Lunchbox Architecture Documentation Requirements</h1>
+<p>In order for the app architecture to be properly reviewed, please draft the following documentation:</p>
+<ol>
+<li>Database Structure Schema</li>
+<li>Database Security Schema</li>
+<li>User Flow Diagram</li>
+<li>Page Rendering Plan</li>
+</ol>
+<h2 id="database-structure-schema">Database Structure Schema</h2>
+<p>A high-level summary of how documents in the database will be structured and what properties will be stored in each document.</p>
+<p>For simplicity, the schema can be represented by interfaces for each document and a json representation of the overall database structure.</p>
+<p>Schema syntax recommendations:</p>
+<ol>
+<li>Alias any special strings or numbers that only allow specific values.</li>
+<li>Mark any properties that the user is not allowed to change as readonly.</li>
+<li>Use snake_case for database collection names, camelCase for document property names, and kebab-case for document ids.</li>
+</ol>
+<p>Basic example included below:</p>
+<pre class=" language-typescript"><code class="prism  language-typescript"><span class="token comment">/* Document Ids */</span>
+<span class="token keyword">type</span> UserId <span class="token operator">=</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+<span class="token keyword">type</span> CourseId <span class="token operator">=</span> <span class="token string">"pcm"</span> <span class="token operator">|</span> <span class="token string">"pjm"</span> <span class="token operator">|</span> <span class="token string">"cd"</span> <span class="token operator">|</span> <span class="token string">"pa"</span> <span class="token operator">|</span> <span class="token string">"ppd"</span> <span class="token operator">|</span> <span class="token string">"pdd"</span><span class="token punctuation">;</span>
+<span class="token keyword">type</span> BoxId <span class="token operator">=</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span><span class="token punctuation">;</span>
+<span class="token keyword">type</span> ModuleId <span class="token operator">=</span> <span class="token string">"standpipes"</span> <span class="token operator">|</span> <span class="token string">"fire-sprinklers"</span> <span class="token operator">|</span> <span class="token string">"flame-smoke-spread-index"</span> <span class="token operator">|</span> <span class="token string">"fire-protection"</span><span class="token punctuation">;</span>
+<span class="token keyword">type</span> PublicationId <span class="token operator">=</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+
+<span class="token comment">/* Special Strings */</span>
+<span class="token keyword">type</span> FileUrl <span class="token operator">=</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+<span class="token keyword">type</span> Date <span class="token operator">=</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+<span class="token keyword">type</span> Markdown <span class="token operator">=</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+
+<span class="token comment">/* Special Numbers */</span>
+<span class="token keyword">type</span> ConfidenceLevel <span class="token operator">=</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> <span class="token number">3</span><span class="token punctuation">;</span>
+
+<span class="token comment">/* Special Objects */</span>
+<span class="token keyword">interface</span>  <span class="token class-name">CourseProgressObject</span> <span class="token punctuation">{</span>
+  startedAt<span class="token punctuation">:</span> Date<span class="token punctuation">;</span>
+  currentSection<span class="token punctuation">:</span> <span class="token keyword">number</span><span class="token punctuation">;</span>
+  currentModule<span class="token punctuation">:</span> ModuleId<span class="token punctuation">;</span>
+  confidence<span class="token punctuation">:</span> <span class="token punctuation">{</span> <span class="token punctuation">[</span><span class="token keyword">module</span><span class="token punctuation">:</span> ModuleId<span class="token punctuation">]</span><span class="token punctuation">:</span> ConfidenceLevel <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/* Document Schemas */</span>
+<span class="token keyword">interface</span>  <span class="token class-name">UserDocument</span> <span class="token punctuation">{</span>
+  username<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+  avatar<span class="token punctuation">:</span> FileUrl<span class="token punctuation">;</span>
+  courseProgress<span class="token punctuation">:</span> <span class="token punctuation">{</span> <span class="token punctuation">[</span>course<span class="token punctuation">:</span> CourseId<span class="token punctuation">]</span><span class="token punctuation">:</span> CourseProgressObject <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  readonly  purchasedPublications<span class="token punctuation">:</span> PublicationId<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">interface</span>  <span class="token class-name">BoxDocument</span> <span class="token punctuation">{</span>
+  readonly  name<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+  readonly  summary<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+  readonly  icon<span class="token punctuation">:</span> FileUrl<span class="token punctuation">;</span>
+  readonly  price<span class="token punctuation">:</span> <span class="token keyword">number</span><span class="token punctuation">;</span>
+  readonly  courses<span class="token punctuation">:</span> CourseId<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">interface</span>  <span class="token class-name">CourseDocument</span> <span class="token punctuation">{</span>
+  readonly  box<span class="token punctuation">:</span> BoxId<span class="token punctuation">;</span>
+  readonly  name<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+  readonly  summary<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+  readonly  icon<span class="token punctuation">:</span> FileUrl<span class="token punctuation">;</span>
+  readonly  price<span class="token punctuation">:</span> <span class="token keyword">number</span><span class="token punctuation">;</span>
+  readonly  sections<span class="token punctuation">:</span> <span class="token punctuation">{</span> <span class="token punctuation">[</span>section<span class="token punctuation">:</span> <span class="token keyword">number</span><span class="token punctuation">]</span><span class="token punctuation">:</span> ModuleId<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">interface</span>  <span class="token class-name">ModuleDocument</span> <span class="token punctuation">{</span>
+  readonly  course<span class="token punctuation">:</span> CourseId<span class="token punctuation">;</span>
+  readonly  name<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+  readonly  summary<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+  readonly  publication<span class="token punctuation">:</span> PublicationId<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">interface</span>  <span class="token class-name">PublicationDocument</span> <span class="token punctuation">{</span>
+  readonly  content<span class="token punctuation">:</span> Markdown<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+</code></pre>
+<pre class=" language-json"><code class="prism  language-json"><span class="token comment">/* Overall Database Schema */</span>
+<span class="token punctuation">{</span>
+  <span class="token string">"users"</span><span class="token punctuation">:</span> <span class="token string">"UserDocument"</span><span class="token punctuation">,</span>
+  <span class="token string">"boxes"</span><span class="token punctuation">:</span> <span class="token string">"BoxDocument"</span><span class="token punctuation">,</span>
+  <span class="token string">"courses"</span><span class="token punctuation">:</span> <span class="token string">"CourseDocument"</span><span class="token punctuation">,</span>
+  <span class="token string">"modules"</span><span class="token punctuation">:</span> <span class="token string">"ModuleDocument"</span><span class="token punctuation">,</span>
+  <span class="token string">"publications"</span><span class="token punctuation">:</span> <span class="token string">"PublicationDocument"</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>Design Recommendations:</p>
+<ol>
+<li>Keep the database structure as flat as possible.
+<ul>
+<li>If possible, only use root collections.</li>
+<li>If a sub-collection is necessary, it should be no more than one level deep (no grandchildren sub-collections).</li>
+</ul>
+</li>
+<li>Ensure that security-critical or personally-identifiable information is not stored in firestore.
+<ul>
+<li>Store this information as custom claims in the user’s authentication token instead.</li>
+<li>Only update these claims using firebase admin cloud function triggers.</li>
+</ul>
+</li>
+</ol>
+<pre class=" language-typescript"><code class="prism  language-typescript"><span class="token keyword">interface</span>  <span class="token class-name">UserClaims</span> <span class="token punctuation">{</span>
+  admin<span class="token punctuation">:</span> <span class="token keyword">boolean</span><span class="token punctuation">;</span>
+  purchased<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  name<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+  dateOfBirth<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+  address<span class="token punctuation">:</span> <span class="token keyword">string</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2 id="database-security-schema">Database Security Schema</h2>
+<p>A high-level summary of how the database will be secured.</p>
+<p>For ease of future development, the schema should be represented using firestore.rules syntax.</p>
+<p>Basic example included below:</p>
+<pre class=" language-javascript"><code class="prism  language-javascript">rules_version <span class="token operator">=</span> <span class="token string">'2'</span><span class="token punctuation">;</span>
+service  cloud<span class="token punctuation">.</span>firestore <span class="token punctuation">{</span>
+  match <span class="token operator">/</span>databases<span class="token operator">/</span><span class="token punctuation">{</span>database<span class="token punctuation">}</span><span class="token operator">/</span>documents <span class="token punctuation">{</span>
+    match <span class="token operator">/</span>users<span class="token operator">/</span><span class="token punctuation">{</span>userId<span class="token punctuation">}</span> <span class="token punctuation">{</span>
+      allow  <span class="token keyword">get</span><span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token function">isUser</span><span class="token punctuation">(</span>userId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      allow  list<span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token boolean">false</span><span class="token punctuation">;</span>
+      allow  create<span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token boolean">false</span><span class="token punctuation">;</span>
+      allow  update<span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token function">isUser</span><span class="token punctuation">(</span>userId<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token function">isValidUserDocument</span><span class="token punctuation">(</span>request<span class="token punctuation">.</span>resource<span class="token punctuation">.</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      allow  <span class="token keyword">delete</span><span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token boolean">false</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    match <span class="token operator">/</span>boxes<span class="token operator">/</span><span class="token punctuation">{</span>boxId<span class="token punctuation">}</span> <span class="token punctuation">{</span>
+      allow  <span class="token keyword">get</span><span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token boolean">true</span><span class="token punctuation">;</span>
+      allow  list<span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token boolean">true</span><span class="token punctuation">;</span>
+      allow  create<span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token function">isAdmin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      allow  update<span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token function">isAdmin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      allow  <span class="token keyword">delete</span><span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token function">isAdmin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    match <span class="token operator">/</span>courses<span class="token operator">/</span><span class="token punctuation">{</span>courseId<span class="token punctuation">}</span> <span class="token punctuation">{</span>
+      allow  <span class="token keyword">get</span><span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token boolean">true</span><span class="token punctuation">;</span>
+      allow  list<span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token boolean">true</span><span class="token punctuation">;</span>
+      allow  create<span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token function">isAdmin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      allow  update<span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token function">isAdmin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      allow  <span class="token keyword">delete</span><span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token function">isAdmin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    match <span class="token operator">/</span>modules<span class="token operator">/</span><span class="token punctuation">{</span>moduleId<span class="token punctuation">}</span> <span class="token punctuation">{</span>
+      allow  <span class="token keyword">get</span><span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token boolean">true</span><span class="token punctuation">;</span>
+      allow  list<span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token boolean">true</span><span class="token punctuation">;</span>
+      allow  create<span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token function">isAdmin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      allow  update<span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token function">isAdmin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      allow  <span class="token keyword">delete</span><span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token function">isAdmin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    match <span class="token operator">/</span>publications<span class="token operator">/</span><span class="token punctuation">{</span>publicationId<span class="token punctuation">}</span> <span class="token punctuation">{</span>
+      allow  <span class="token keyword">get</span><span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token function">isPurchased</span><span class="token punctuation">(</span>publicationId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      allow  list<span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token boolean">false</span><span class="token punctuation">;</span>
+      allow  create<span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token function">isAdmin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      allow  update<span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token function">isAdmin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      allow  <span class="token keyword">delete</span><span class="token punctuation">:</span> <span class="token keyword">if</span>  <span class="token function">isAdmin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">function</span>  <span class="token function">isSignedIn</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span>  request<span class="token punctuation">.</span>auth <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">function</span>  <span class="token function">isUser</span><span class="token punctuation">(</span>id<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span>  <span class="token function">isSignedIn</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> id <span class="token operator">==</span> request<span class="token punctuation">.</span>auth<span class="token punctuation">.</span>uid<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">function</span>  <span class="token function">isPurchased</span><span class="token punctuation">(</span>id<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span>  <span class="token function">isSignedIn</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> id  <span class="token keyword">in</span>  request<span class="token punctuation">.</span>auth<span class="token punctuation">.</span>token<span class="token punctuation">.</span>purchased<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">function</span>  <span class="token function">isAdmin</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span>  <span class="token function">isSignedIn</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> request<span class="token punctuation">.</span>auth<span class="token punctuation">.</span>token<span class="token punctuation">.</span>admin <span class="token operator">==</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">function</span>  <span class="token function">isValidUserDocument</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span>  data<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">hasOnly</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">"username"</span><span class="token punctuation">,</span> <span class="token string">"avatar"</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+      <span class="token operator">&amp;&amp;</span> data<span class="token punctuation">.</span>username  is  string
+      <span class="token operator">&amp;&amp;</span> data<span class="token punctuation">.</span>avatar  is  string<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2 id="user-flow-diagram">User Flow Diagram</h2>
+<p>A high level summary of the various paths through the application that a user can take.</p>
+<p>Depict as a flowchart where each page/dialog window is a node in the chart.</p>
+<p>Ensure that all planned database reads/writes and query params are noted in the flow.</p>
+<p><a href="https://firebase.google.com/docs/firestore/query-data/queries">https://firebase.google.com/docs/firestore/query-data/queries</a></p>
+<p>Basic example included below:</p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-B93zs3R48QZVX6iv" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="346.65625" style="max-width: 1000.2734375px;" viewBox="0 0 1000.2734375 346.65625"><style>#mermaid-svg-B93zs3R48QZVX6iv{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-B93zs3R48QZVX6iv .error-icon{fill:#552222;}#mermaid-svg-B93zs3R48QZVX6iv .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-B93zs3R48QZVX6iv .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-B93zs3R48QZVX6iv .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-B93zs3R48QZVX6iv .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-B93zs3R48QZVX6iv .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-B93zs3R48QZVX6iv .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-B93zs3R48QZVX6iv .marker{fill:#666;stroke:#666;}#mermaid-svg-B93zs3R48QZVX6iv .marker.cross{stroke:#666;}#mermaid-svg-B93zs3R48QZVX6iv svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-B93zs3R48QZVX6iv .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#000000;}#mermaid-svg-B93zs3R48QZVX6iv .cluster-label text{fill:#333;}#mermaid-svg-B93zs3R48QZVX6iv .cluster-label span{color:#333;}#mermaid-svg-B93zs3R48QZVX6iv .label text,#mermaid-svg-B93zs3R48QZVX6iv span{fill:#000000;color:#000000;}#mermaid-svg-B93zs3R48QZVX6iv .node rect,#mermaid-svg-B93zs3R48QZVX6iv .node circle,#mermaid-svg-B93zs3R48QZVX6iv .node ellipse,#mermaid-svg-B93zs3R48QZVX6iv .node polygon,#mermaid-svg-B93zs3R48QZVX6iv .node path{fill:#eee;stroke:#999;stroke-width:1px;}#mermaid-svg-B93zs3R48QZVX6iv .node .label{text-align:center;}#mermaid-svg-B93zs3R48QZVX6iv .node.clickable{cursor:pointer;}#mermaid-svg-B93zs3R48QZVX6iv .arrowheadPath{fill:#333333;}#mermaid-svg-B93zs3R48QZVX6iv .edgePath .path{stroke:#666;stroke-width:1.5px;}#mermaid-svg-B93zs3R48QZVX6iv .flowchart-link{stroke:#666;fill:none;}#mermaid-svg-B93zs3R48QZVX6iv .edgeLabel{background-color:white;text-align:center;}#mermaid-svg-B93zs3R48QZVX6iv .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#mermaid-svg-B93zs3R48QZVX6iv .cluster rect{fill:hsl(210,66.6666666667%,95%);stroke:#26a;stroke-width:1px;}#mermaid-svg-B93zs3R48QZVX6iv .cluster text{fill:#333;}#mermaid-svg-B93zs3R48QZVX6iv .cluster span{color:#333;}#mermaid-svg-B93zs3R48QZVX6iv div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(-160,0%,93.3333333333%);border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-svg-B93zs3R48QZVX6iv:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-B93zs3R48QZVX6iv flowchart{fill:apa;}</style><g><g class="output"><g class="clusters"></g><g class="edgePaths"><g class="edgePath LS-A LE-B" id="L-A-B" style="opacity: 1;"><path class="path" d="M128.046875,232.93359375L153.046875,232.93359375L178.54687652587893,233.43359375" marker-end="url(https://stackedit.io/app#arrowhead2438)" style="fill:none"></path><defs><marker id="arrowhead2438" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B LE-C" id="L-B-C" style="opacity: 1;"><path class="path" d="M282.3304241225913,210.96401634671244L340.6281280517578,177.96875L376.9562530517578,177.96875" marker-end="url(https://stackedit.io/app#arrowhead2439)" style="fill:none"></path><defs><marker id="arrowhead2439" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-C LE-D" id="L-C-D" style="opacity: 1;"><path class="path" d="M589.5500030517578,177.96875L614.5500030517578,177.96875L640.0500045776366,178.46875" marker-end="url(https://stackedit.io/app#arrowhead2440)" style="fill:none"></path><defs><marker id="arrowhead2440" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-D LE-F" id="L-D-F" style="opacity: 1;"><path class="path" d="M738.9532529922831,146.91418896640434L806.3359375,82.8046875L842.6640625,82.8046875" marker-end="url(https://stackedit.io/app#arrowhead2441)" style="fill:none"></path><defs><marker id="arrowhead2441" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-D LE-G" id="L-D-G" style="opacity: 1;"><path class="path" d="M738.9532545677497,210.02331250988726L806.3359375,273.1328125L851.9453125,273.1328125" marker-end="url(https://stackedit.io/app#arrowhead2442)" style="fill:none"></path><defs><marker id="arrowhead2442" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B LE-H" id="L-B-H" style="opacity: 1;"><path class="path" d="M282.3304221570912,255.90317006702998L340.6281280517578,287.8984375L446.3234405517578,287.8984375" marker-end="url(https://stackedit.io/app#arrowhead2443)" style="fill:none"></path><defs><marker id="arrowhead2443" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-B" class="edgeLabel L-LS-A' L-LE-B"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(340.6281280517578,177.96875)" style="opacity: 1;"><g transform="translate(-11.328125,-13)" class="label"><rect rx="0" ry="0" width="22.65625" height="26"></rect><foreignObject width="22.65625" height="26"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B-C" class="edgeLabel L-LS-B' L-LE-C">Yes</span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-C-D" class="edgeLabel L-LS-C' L-LE-D"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(806.3359375,82.8046875)" style="opacity: 1;"><g transform="translate(-11.328125,-13)" class="label"><rect rx="0" ry="0" width="22.65625" height="26"></rect><foreignObject width="22.65625" height="26"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-D-F" class="edgeLabel L-LS-D' L-LE-F">Yes</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(806.3359375,273.1328125)" style="opacity: 1;"><g transform="translate(-9.3984375,-13)" class="label"><rect rx="0" ry="0" width="18.796875" height="26"></rect><foreignObject width="18.796875" height="26"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-D-G" class="edgeLabel L-LS-D' L-LE-G">No</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(340.6281280517578,287.8984375)" style="opacity: 1;"><g transform="translate(-9.3984375,-13)" class="label"><rect rx="0" ry="0" width="18.796875" height="26"></rect><foreignObject width="18.796875" height="26"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B-H" class="edgeLabel L-LS-B' L-LE-H">No</span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="flowchart-A-12657" transform="translate(68.0234375,232.93359375)" style="opacity: 1;"><circle x="-60.0234375" y="-23" r="60.0234375" class="label-container"></circle><g class="label" transform="translate(0,0)"><g transform="translate(-50.0234375,-13)"><foreignObject width="100.046875" height="26"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">/courses/pcm</div></foreignObject></g></g></g><g class="node default" id="flowchart-B-12658" transform="translate(241.1734390258789,232.93359375)" style="opacity: 1;"><polygon points="63.1265625,0 126.253125,-63.1265625 63.1265625,-126.253125 0,-63.1265625" transform="translate(-63.1265625,63.1265625)" class="label-container"></polygon><g class="label" transform="translate(0,0)"><g transform="translate(-37.140625,-13)"><foreignObject width="74.28125" height="26"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Logged In?</div></foreignObject></g></g></g><g class="node default" id="flowchart-C-12660" transform="translate(483.2531280517578,177.96875)" style="opacity: 1;"><rect rx="5" ry="5" x="-106.296875" y="-23" width="212.59375" height="46" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-96.296875,-13)"><foreignObject width="192.59375" height="26"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">GET DOC from users == uid</div></foreignObject></g></g></g><g class="node default" id="flowchart-D-12662" transform="translate(704.7789077758789,177.96875)" style="opacity: 1;"><polygon points="65.22890625000001,0 130.45781250000002,-65.22890625000001 65.22890625000001,-130.45781250000002 0,-65.22890625000001" transform="translate(-65.22890625000001,65.22890625000001)" class="label-container"></polygon><g class="label" transform="translate(0,0)"><g transform="translate(-39.4765625,-13)"><foreignObject width="78.953125" height="26"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Purchased?</div></foreignObject></g></g></g><g class="node default" id="flowchart-F-12664" transform="translate(917.46875,82.8046875)" style="opacity: 1;"><circle x="-74.8046875" y="-23" r="74.8046875" class="label-container"></circle><g class="label" transform="translate(0,0)"><g transform="translate(-64.8046875,-13)"><foreignObject width="129.609375" height="26"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">/my_courses/pcm</div></foreignObject></g></g></g><g class="node default" id="flowchart-G-12667" transform="translate(917.46875,273.1328125)" style="opacity: 1;"><circle x="-65.5234375" y="-23" r="65.5234375" class="label-container"></circle><g class="label" transform="translate(0,0)"><g transform="translate(-55.5234375,-13)"><foreignObject width="111.046875" height="26"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">/purchase/pcm</div></foreignObject></g></g></g><g class="node default" id="flowchart-H-12670" transform="translate(483.2531280517578,287.8984375)" style="opacity: 1;"><circle x="-36.9296875" y="-23" r="36.9296875" class="label-container"></circle><g class="label" transform="translate(0,0)"><g transform="translate(-26.9296875,-13)"><foreignObject width="53.859375" height="26"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">/signup</div></foreignObject></g></g></g></g></g></g></svg></pre>
+<h2 id="page-rendering-plan">Page Rendering Plan</h2>
+<p>A list of every page in the application and the planned pre-rendering strategy for them.</p>
+<p>Note which pages will be server-side rendered, statically generated, or incrementally statically generated (and how often they should revalidate).</p>
+<p>Also note if the page requires any client-side queries in order to render.</p>
+<p><a href="https://nextjs.org/docs/basic-features/pages#two-forms-of-pre-rendering">https://nextjs.org/docs/basic-features/pages#two-forms-of-pre-rendering</a></p>
+<p>The following rendering strategies are ordered from most performant to least performant:</p>
+<pre><code>b = fully static (rendered only at build-time)
+i = incrementally static (rendered at build-time, or by server when necessary)
+s = server-side (rendered by server)
+c = client-side (rendered by client)
+</code></pre>
+<p>Basic example included below:</p>
+<pre><code>b /
+b /signup
+b /login
+b /pricing
+b /courses/pcm
+b /courses/pjm
+b /courses/cd
+i /courses/pcm/discussion (revalidate: every 5 minutes)
+c /my_courses
+c /my_courses/pcm
+c /my_courses/pjm
+c /my_courses/cd
+</code></pre>
+</div>
+</body>
+
+</html>
