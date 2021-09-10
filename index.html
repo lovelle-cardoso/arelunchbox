@@ -175,7 +175,7 @@ service  cloud<span class="token punctuation">.</span>firestore <span class="tok
     <span class="token punctuation">}</span>
 
     <span class="token keyword">function</span> <span class="token function">isPurchased</span><span class="token punctuation">(</span>id<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-      <span class="token keyword">return</span> <span class="token function">isSignedIn</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> id  <span class="token keyword">in</span>  request<span class="token punctuation">.</span>auth<span class="token punctuation">.</span>token<span class="token punctuation">.</span>purchased<span class="token punctuation">;</span>
+      <span class="token keyword">return</span> <span class="token function">isSignedIn</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> id <span class="token keyword">in</span> request<span class="token punctuation">.</span>auth<span class="token punctuation">.</span>token<span class="token punctuation">.</span>purchased<span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
 
     <span class="token keyword">function</span> <span class="token function">isAdmin</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
